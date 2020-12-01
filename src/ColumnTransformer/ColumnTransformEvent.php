@@ -3,9 +3,9 @@
 namespace machbarmacher\GdprDump\ColumnTransformer;
 
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class ColumnTransformEvent extends Event
+class ColumnTransformEvent extends EventDispatcher
 {
     protected $table;
     protected $column;
