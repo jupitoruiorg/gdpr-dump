@@ -1,38 +1,37 @@
 {
-  "name": "machbarmacher/gdpr-dump",
-  "description": "A drop-in replacement for mysqldump that optionally sanitizes DB fields for better GDPR conformity.",
-  "require": {
-    "symfony/console": "^3.0",
-    "ifsnop/mysqldump-php": "^2.9",
-    "cweagans/composer-patches": "^1.6",
-    "bomoko/mysql-cnf-parser": "^0.0.2",
-    "fzaninotto/faker": "^1.7",
-    "symfony/event-dispatcher": "~3.4|~4.0"
-  },
-  "license": "GPL-2.0-or-later",
-  "authors": [
-    {
-      "name": "Axel Rutz",
-      "email": "axel.rutz@machbarmacher.net"
+    "name": "machbarmacher/gdpr-dump",
+    "description": "A drop-in replacement for mysqldump that optionally sanitizes DB fields for better GDPR conformity.",
+    "require": {
+        "symfony/console": "^3.0",
+        "ifsnop/mysqldump-php": "^2.9",
+        "cweagans/composer-patches": "^1.6",
+        "bomoko/mysql-cnf-parser": "^0.0.2",
+        "fzaninotto/faker": "^1.7",
+        "symfony/event-dispatcher": "~3.4|~4.0"
+    },
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Axel Rutz",
+            "email": "axel.rutz@machbarmacher.net"
+        }
+    ],
+    "bin": [
+        "mysqldump"
+    ],
+    "autoload": {
+        "psr-4": {
+            "machbarmacher\\GdprDump\\": "src/"
+        }
+    },
+    "extra": {
+        "patches": {
+            "ifsnop/mysqldump-php": {
+                "Add getter": "https://patch-diff.githubusercontent.com/raw/ifsnop/mysqldump-php/pull/137.patch"
+            }
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.2"
     }
-  ],
-  "bin": [
-    "mysqldump"
-  ],
-  "autoload": {
-    "psr-4": {
-      "machbarmacher\\GdprDump\\": "src/"
-    }
-  },
-  "extra": {
-    "patches": {
-      "ifsnop/mysqldump-php": {
-        "Add getter": "https://patch-diff.githubusercontent.com/raw/ifsnop/mysqldump-php/pull/137.patch"
-      }
-    }
-  },
-  "prefer-stable": true,
-  "require-dev": {
-    "phpunit/phpunit": "^7.2"
-  }
 }
