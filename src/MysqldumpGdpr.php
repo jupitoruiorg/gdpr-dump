@@ -39,29 +39,43 @@ class MysqldumpGdpr extends Mysqldump
             $this->debugSql = $dumpSettings['debug-sql'];
             unset($dumpSettings['debug-sql']);
         }
+        $this->setTransformColumnValueHook(
+            function ($tableName, $colName, $colValue)
+            {
+                if (!empty($this->gdprReplacements[$tableName][$colName])) {
+                    $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
+                    if($replacement !== FALSE) {
+                        return $replacement;
+                    }
+                }
+                return $colValue;
+            }
+        );
+
         parent::__construct($dsn, $user, $pass, $dumpSettings, $pdoSettings);
     }
 
-    public function getColumnStmt($tableName)
+    /*public function getColumnStmt($tableName)
     {
         $columnStmt = parent::getColumnStmt($tableName);
         if (!empty($this->gdprExpressions[$tableName])) {
-            $columnTypes = $this->tableColumnTypes()[$tableName];
+            $columnTypes = $this->tableColumnTypes[$tableName];
             foreach (array_keys($columnTypes) as $i => $columnName) {
                 if (!empty($this->gdprExpressions[$tableName][$columnName])) {
                     $expression = $this->gdprExpressions[$tableName][$columnName];
                     $columnStmt[$i] = "$expression as $columnName";
                 }
             }
+
             if ($this->debugSql) {
                 print "/* SELECT " . implode(",",
-                        $columnStmt) . " FROM `$tableName` */\n\n";
+                        $columnStmt) . " FROM `$tableName` *\/\n\n";
             }
         }
         return $columnStmt;
-    }
+    }*/
 
-    protected function hookTransformColumnValue($tableName, $colName, $colValue)
+    /*protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
         if (!empty($this->gdprReplacements[$tableName][$colName])) {
             $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
@@ -70,6 +84,6 @@ class MysqldumpGdpr extends Mysqldump
             }
         }
         return $colValue;
-    }
+    }*/
 
 }

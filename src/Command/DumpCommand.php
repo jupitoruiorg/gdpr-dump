@@ -127,8 +127,8 @@ class DumpCommand extends Command
      * @return mixed
      */
     public function getPasswordFromConsole(
-      InputInterface $input,
-      OutputInterface $output
+        InputInterface $input,
+        OutputInterface $output
     ) {
         $questionHelper = $this->getHelper('question');
         $question = new Question("Enter password:");
@@ -150,9 +150,9 @@ class DumpCommand extends Command
      * @return mixed|null
      */
     public function getEffectivePassword(
-      InputInterface $input,
-      OutputInterface $output,
-      $default = null
+        InputInterface $input,
+        OutputInterface $output,
+        $default = null
     ) {
         $password = $default;
 
