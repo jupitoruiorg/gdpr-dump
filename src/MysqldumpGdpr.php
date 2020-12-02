@@ -39,6 +39,7 @@ class MysqldumpGdpr extends Mysqldump
             $this->debugSql = $dumpSettings['debug-sql'];
             unset($dumpSettings['debug-sql']);
         }
+
         $this->setTransformColumnValueHook(
             function ($tableName, $colName, $colValue)
             {
