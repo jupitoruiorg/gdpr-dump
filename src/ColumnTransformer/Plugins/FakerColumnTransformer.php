@@ -13,11 +13,17 @@ class FakerColumnTransformer extends ColumnTransformer
 
     // These are kept for backward compatibility
     private static $formatterTansformerMap = [
-        'longText' => 'paragraph',
-        'number' => 'randomNumber',
+        'longText'   => 'paragraph',
+        'number'     => 'randomNumber',
         'randomText' => 'sentence',
-        'text' => 'sentence',
-        'uri' => 'url',
+        'text'       => 'sentence',
+        'uri'        => 'url',
+        'member_number' => [
+            'numerify' => '#########'
+        ],
+        'social' => [
+            'numerify' => '###-##-####'
+        ]
     ];
 
 
@@ -26,25 +32,37 @@ class FakerColumnTransformer extends ColumnTransformer
         return array_keys(self::$formatterTansformerMap);
     }
 
+
     public function __construct()
     {
-        if (!isset(self::$generator)) {
+        if ( ! isset(self::$generator)) {
             self::$generator = Factory::create();
-            foreach(self::$generator->getProviders() as $provider)
-            {
-                $clazz = new \ReflectionClass($provider);
+
+            foreach (self::$generator->getProviders() as $provider) {
+                $clazz   = new \ReflectionClass($provider);
                 $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
-                foreach($methods as $m)
-                {
-                    if(strpos($m->name, '__') === 0) continue;
+                foreach ($methods as $m) {
+                    if (strpos($m->name, '__') === 0) {
+                        continue;
+                    }
                     self::$formatterTansformerMap[$m->name] = $m->name;
                 }
             }
         }
     }
 
+
     public function getValue($expression)
     {
-        return self::$generator->format(self::$formatterTansformerMap[$expression['formatter']]);
+        $formatter = self::$formatterTansformerMap[$expression['formatter']];
+
+        if (is_array($formatter)) {
+            $key = key($formatter);
+            $value = $formatter[$key];
+
+            return self::$generator->{$key}($value);
+        }
+
+        return self::$generator->format($formatter);
     }
 }
