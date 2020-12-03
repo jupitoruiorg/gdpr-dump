@@ -13,17 +13,23 @@ class FakerColumnTransformer extends ColumnTransformer
 
     // These are kept for backward compatibility
     private static $formatterTansformerMap = [
-        'longText'   => 'paragraph',
-        'number'     => 'randomNumber',
-        'randomText' => 'sentence',
-        'text'       => 'sentence',
-        'uri'        => 'url',
-        'member_number' => [
+        'longText'           => 'paragraph',
+        'number'             => 'randomNumber',
+        'randomText'         => 'sentence',
+        'text'               => 'sentence',
+        'uri'                => 'url',
+        'member_number'      => [
             'numerify' => '#########'
         ],
-        'social' => [
+        'social_number'      => [
             'numerify' => '###-##-####'
-        ]
+        ],
+        'phone_format_union' => [
+            'numerify' => '(###) ###-#### x###'
+        ],
+        'license'            => [
+            'numerify' => '############'
+        ],
     ];
 
 
@@ -57,7 +63,7 @@ class FakerColumnTransformer extends ColumnTransformer
         $formatter = self::$formatterTansformerMap[$expression['formatter']];
 
         if (is_array($formatter)) {
-            $key = key($formatter);
+            $key   = key($formatter);
             $value = $formatter[$key];
 
             return self::$generator->{$key}($value);
