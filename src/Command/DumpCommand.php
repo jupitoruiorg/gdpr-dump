@@ -45,6 +45,9 @@ class DumpCommand extends Command
             ->addOption('db-type', null, InputOption::VALUE_OPTIONAL,
                 'The connection DB type. Options are: mysql (default), pgsql, sqlite, dblib.',
                 'mysql')
+            ->addOption('quick', null, InputOption::VALUE_OPTIONAL,
+                'Quick',
+                false)
             ->addOption('defaults-file', null, InputOption::VALUE_OPTIONAL,
                 'An additional my.cnf file.')
             ->addOption('compress-result-file', null, InputOption::VALUE_OPTIONAL,
@@ -310,6 +313,7 @@ class DumpCommand extends Command
             'disable-keys' => true,
             'extended-insert' => true,
             'lock-tables' => true,
+            'quick' => true,
             // --quick
             // --set-charset
             // --------------
@@ -366,6 +370,7 @@ class DumpCommand extends Command
                 'skip-dump-date' => false,
                 'skip-definer' => false,
                 'where' => '',
+                'quick' => true,
                 /* deprecated */
                 'disable-foreign-keys-check' => true,
             ] + [
