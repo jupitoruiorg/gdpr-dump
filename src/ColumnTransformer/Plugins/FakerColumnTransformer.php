@@ -3,34 +3,46 @@
 namespace machbarmacher\GdprDump\ColumnTransformer\Plugins;
 
 use Faker\Factory;
+use Faker\Generator;
 use Faker\Provider\Base;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
 
 class FakerColumnTransformer extends ColumnTransformer
 {
-
     private static $generator;
 
     // These are kept for backward compatibility
-    private static $formatterTansformerMap = [
-        'longText'           => 'paragraph',
-        'number'             => 'randomNumber',
-        'randomText'         => 'sentence',
-        'text'               => 'sentence',
-        'uri'                => 'url',
-        'member_number'      => [
-            'numerify' => '#########'
-        ],
-        'social_number'      => [
-            'numerify' => '###-##-####'
-        ],
-        'phone_format_union' => [
-            'numerify' => '(###) ###-#### x###'
-        ],
-        'license'            => [
-            'numerify' => '############'
-        ],
-    ];
+    private static $formatterTansformerMap = [];
+
+    protected function setSupportedFormats()
+    {
+        self::$formatterTansformerMap = [
+            'longText'           => 'paragraph',
+            'number'             => 'randomNumber',
+            'randomText'         => 'sentence',
+            'text'               => 'sentence',
+            'uri'                => 'url',
+
+            'member_number'      => function(Generator $faker) {
+                return $faker->numerify('#########');
+            },
+            'social_number'      => function(Generator $faker) {
+                return $faker->numerify('###-##-####');
+            },
+            'phone_format_union'      => function(Generator $faker) {
+                return $faker->numerify('(###) ###-#### x###');
+            },
+            'license'      => function(Generator $faker) {
+                return $faker->numerify('############');
+            },
+            'password_bcrypt' => function(Generator $faker) {
+                return password_hash($faker->password(), PASSWORD_BCRYPT);
+            },
+            'money_float' => function (Generator $faker) {
+                return $faker->randomFloat(2);
+            },
+        ];
+    }
 
 
     protected function getSupportedFormatters()
@@ -41,6 +53,8 @@ class FakerColumnTransformer extends ColumnTransformer
 
     public function __construct()
     {
+        $this->setSupportedFormats();
+
         if ( ! isset(self::$generator)) {
             self::$generator = Factory::create();
 
@@ -62,13 +76,10 @@ class FakerColumnTransformer extends ColumnTransformer
     {
         $formatter = self::$formatterTansformerMap[$expression['formatter']];
 
-        if (is_array($formatter)) {
-            $key   = key($formatter);
-            $value = $formatter[$key];
-
-            return self::$generator->{$key}($value);
+        if (is_string($formatter)) {
+            return self::$generator->format($formatter);
         }
 
-        return self::$generator->format($formatter);
+        return $formatter(self::$generator);
     }
 }
